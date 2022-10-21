@@ -6,6 +6,7 @@ import time
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 import pandas as pd
+import shutil
 
 
 def baixar_csv_ibovespa(url, text_bottom):
@@ -33,7 +34,7 @@ def baixar_csv_ibovespa(url, text_bottom):
     return
 
 
-def pegar_arquivo_csv(diret, name_file_ibov_find):
+def pegar_arquivo_csv(diret, name_file_ibov_find, new_directory_files):
     filename_ibov = None
 
     files_directory = glob.glob(diret + "/*.csv")
@@ -43,6 +44,11 @@ def pegar_arquivo_csv(diret, name_file_ibov_find):
         if filename.find(name_file_ibov_find) != -1:
             filename_ibov = filename
             break
+        
+    if (filename_ibov):
+        filename_ibov = shutil.move(filename_ibov, new_directory_files)
+    else:
+        print('Arquivo "{}" não encontrado no diretório "{}".'.format(name_file_ibov_find, diret))
 
     return filename_ibov
 
@@ -75,13 +81,16 @@ def read_file_ibov(path_file):
 if __name__ == '__main__':
     url = 'https://sistemaswebb3-listados.b3.com.br/indexPage/day/IBOV?language=pt-br'
     text_bottom = 'Download'
-    directory_files = '/home/cayo/Downloads/'
+    old_directory_files = '/home/cayo/Downloads/'
+    new_directory_files = './historico_ibov_diario/'
     name_file_ibov_find = 'IBOVDia'
 
-    file_ibov = pegar_arquivo_csv(directory_files, name_file_ibov_find)
+    baixar_csv_ibovespa(url, text_bottom)
+
+    file_ibov = pegar_arquivo_csv(old_directory_files, name_file_ibov_find, new_directory_files)
 
     if (file_ibov == None):
         print('Não foi possível encontrar o arquivo do ibovespa no diretório "{}".'.format(
-            directory_files))
+            old_directory_files))
     else:
         read_file_ibov(clean_file_ibov(file_ibov))
