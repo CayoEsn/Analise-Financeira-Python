@@ -28,7 +28,7 @@ def baixar_csv_ibovespa(url, text_bottom):
             print('Clicou no botão para download')
             link.click()
 
-        time.sleep(3)
+        time.sleep(2)
     driver.quit()
 
     return
@@ -45,10 +45,14 @@ def pegar_arquivo_csv(diret, name_file_ibov_find, new_directory_files):
             filename_ibov = filename
             break
         
-    if (filename_ibov):
+    name_file = filename_ibov.split('/')[-1]
+    
+    if os.path.exists(os.path.join(new_directory_files, name_file)):
+        print('O Arquivo "{}" já existe no diretório "{}".'.format(os.path.join(new_directory_files, name_file), new_directory_files))
+    elif (filename_ibov and not os.path.exists(os.path.join(new_directory_files, name_file))):
         filename_ibov = shutil.move(filename_ibov, new_directory_files)
     else:
-        print('Arquivo "{}" não encontrado no diretório "{}".'.format(name_file_ibov_find, diret))
+        print('O Arquivo "{}" não encontrado no diretório "{}".'.format(name_file_ibov_find, diret))
 
     return filename_ibov
 
